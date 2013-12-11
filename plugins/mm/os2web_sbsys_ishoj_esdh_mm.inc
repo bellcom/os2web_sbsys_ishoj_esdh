@@ -37,11 +37,17 @@ function os2web_sbsys_ishoj_esdh_mm_get_import_list() {
    * as parsed from the dir name of the manifest.
    */
   $uris = array();
-  foreach (file_scan_directory(variable_get('os2web_sbsys_ishoj_esdh_mm_path', MM_IMPORT_DIR), '/\.xml$/i', array('recurse' => TRUE)) as $xml_file) {
-    $pub_id = (int) str_replace('Publication', '', $xml_file->name);
-    $uris[] = array('id' => $pub_id, 'uri' => $xml_file->uri);
-  }
 
+  $dir = variable_get('os2web_sbsys_ishoj_esdh_mm_path', MM_IMPORT_DIR);
+
+  foreach (file_scan_directory($dir, '/\.xml$/i', array('recurse' => TRUE)) as $xml_file) {
+    // Skip preview.xml files
+    if($xml_file->name !== 'preview'){
+      $pathinfo = pathinfo($xml_file->uri);
+      $pub_id = (int) str_replace($dir . '/Publication', '', $pathinfo['dirname']);
+      $uris[] = array('id' => $pub_id, 'uri' => $xml_file->uri);
+    }
+  }
   return $uris;
 }
 
