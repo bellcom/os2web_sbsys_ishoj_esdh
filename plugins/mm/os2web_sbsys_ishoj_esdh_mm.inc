@@ -270,13 +270,12 @@ function _os2web_sbsys_ishoj_esdh_mm_import_meeting_agenda_item($meeting, $xml) 
   //$xml_item['pdf'] = (string) $xml->PDFDocument;
   $xml_item_document = $xml->Bilagsliste;
   $xml_item_bullet = $xml->Indhold;
-  $xml_item['name'] = (string) $xml->attributes()->Nummer . ' ' . $xml->Overskrift;
+  $xml_item['name'] = (string) $xml->attributes()->Nummer . '. ' . $xml->Overskrift;
   $xml_item['document_type'] = (string) $xml->attributes()->Åbent;
 
   $item = array(
     'id' => $xml_item['number'],
     'sysid' => (string) $xml['ID'],
-    'title' => 'Punkt ' . $meeting['current_item_nr'] . '. ' . $xml_item['name'],
     'access' => $xml_item['document_type'],
     'bullets' => array(),
     'enclosures' => array(),
