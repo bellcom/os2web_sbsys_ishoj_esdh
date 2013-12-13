@@ -272,7 +272,6 @@ function _os2web_sbsys_ishoj_esdh_mm_import_meeting_agenda_item($meeting, $xml) 
   $xml_item_bullet = $xml->Indhold;
   $xml_item['name'] = (string) $xml->attributes()->Sagstitel;
   $xml_item['document_type'] = (string) $xml->attributes()->Åbent;
-  //$xml_item_participants = $xml->Members;
 
   $item = array(
     'id' => $xml_item['number'],
@@ -307,22 +306,6 @@ function _os2web_sbsys_ishoj_esdh_mm_import_meeting_agenda_item($meeting, $xml) 
         'sysid' => (string) $enclosure->attributes()->BilagID,
       );
     }
-  }
-
-  //Process members that did not participate in the bullet discussion
-  $non_participants = '';
-  foreach ($xml_item_participants->ItemMember as $participant){
-    if (((string) $participant->ParticipationStatusAsValue) === '4'){
-      $non_participants .= (string) $participant->Name . "<br/>";
-    }
-  }
-
-  if (!empty($non_participants)){
-    //Add members that did not participate in the bullet discussion as a last bullet point
-    $item['bullets'][] = array(
-      'title' => 'Afbud / Fraværende',
-      'body' => $non_participants,
-    );
   }
 
   $item += os2web_esdh_provider_default_item();
