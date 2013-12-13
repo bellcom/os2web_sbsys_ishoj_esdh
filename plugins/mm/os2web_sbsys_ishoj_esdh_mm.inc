@@ -127,14 +127,22 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
       $meeting_name = $committee_name;
       //$meeting_uri = (string) $meeting_uri[0];
       //$acadre_version = (string) $acadre_version[0][ID];
-
       $directory_name = dirname(drupal_realpath($file));
+
+      $folder_uri = str_replace(basename($file), '', $file);
+
+      $full_doc = array(
+        'uri' => $folder_uri . '/Dagsorden.doc',
+        'title' => 'Samlet dokument',
+      );
+
       // Check if the committee is allowed to publish.
       $publish_committee = array_map('trim', explode(',', variable_get('os2web_sbsys_ishoj_esdh_approved_committees', MM_DEFAULT_APPROVED)));
       if ($committee == '' || !in_array($committee, $publish_committee)) {
         watchdog('SBsys MM', 'Ignored agenda from "%committee" .', array('%committee' => $committee));
         return FALSE;
       }
+
       // Fix dates.
       $meeting_date_when = str_ireplace(array(". januar ", ". februar ", ". marts ", ". april ", ". maj ", ". juni ", ". juli ", ". august ",". september ", ". oktober ", ". november ", ". december "),
                                         array("-1-", "-2-", "-3-", "-4-", "-5-", "-6-", "-7-", "-8-", "-9-", "-10-", "-11-", "-12-"), $meeting_date_when);
@@ -170,14 +178,11 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
         'committee_group_id' => $committee,
         'title' => $meeting_name,
         'uri' => $file,
-        'folder' => str_replace(basename($file), '', $file),
+        'folder' => $folder_uri,
         'type' => $meeting_type,
         'meeting_date_start' => $meeting_date_when,
-        //'meeting_date_finish' => $meeting_date_until,
+        'full_doc' => $full_doc,
         'location' => $meeting_where,
-        //'acadre_version' => $acadre_version,
-        //'participants' => $participants,
-        //'participants_cancellation' => $participants_cancellation,
       );
 
       /*stan@bellcom.dk 06.10 - importing multiple agendas*/
