@@ -105,7 +105,8 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
       //$meeting_uri = $manifest->xpath("/Publication/OutputFileName");
       //$meeting_data = $manifest->xpath("/Publication/Agendas/Agenda/Meeting");
       $meeting_public = $manifest->xpath("@Åben");
-      $sys_id = $manifest->xpath("Møde/@MødeID");
+      $meeting_id = $manifest->xpath("Møde/@MødeID");
+      $sys_id = $manifest->xpath("@DagsordenID");
       //$meeting_name = $manifest->xpath("/Publication/Agendas/Agenda/Name");
       //$acadre_version = $manifest->xpath("/Publication/GeneratorSettings/@ID");
       //$members = $manifest->xpath("Agendas/Agenda/Meeting/Members/MeetingMember");
@@ -117,7 +118,8 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
       $committee = (string) $committee[0]['UdvalgID'];
       //$committee_group_id = (string) $committee_group_id[0][ID];
       $committee_name = (string) $committee_name[0];
-      $sys_id = (string) $sys_id[0]['MødeID'];
+      $sys_id = (string) $sys_id[0];
+      $meeting_id = (string) $meeting_id[0]['MødeID'];
       $meeting_public = (string) $meeting_public[0];
       $meeting_type = (string) $meeting_type[0];
 
@@ -171,7 +173,8 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
 
       $meeting = array(
         'system_id' => $sys_id,
-        'meeting_id' => $sys_id,
+        'meeting_id' => $meeting_id,
+        'meeting_sub_id' => $sys_id,
         'committee' => $meeting_name,
         'committee_name' => $committee_name,
         'committee_id' => $committee,
