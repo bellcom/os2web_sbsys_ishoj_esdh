@@ -134,7 +134,7 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
       $folder_uri = str_replace(basename($file), '', $file);
 
       $full_doc = array(
-        'uri' => $folder_uri . '/Dagsorden.doc',
+        'uri' => $folder_uri . '/Dagsorden.html',
         'title' => 'Samlet dokument',
       );
 
@@ -192,7 +192,10 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
       $meeting_agendas = array();
       foreach($manifest->xpath("/Dagsorden/Dagsordenpunkter") as $agenda_instance){
         if (!$meeting_agendas){
-          $meeting_agendas = $agenda_instance->xpath("Dagsordenpunkt");
+          if (sizeof($agenda_instance->xpath("Dagsordenpunkt")))
+            $meeting_agendas = $agenda_instance->xpath("Dagsordenpunkt");
+          else
+            $meeting_agendas = $agenda_instance->xpath("Gruppe[@navn='Åbne dagsordenspunkter']/Dagsordenpunkt");
         }
         else {
           foreach($agenda_instance->xpath("Dagsordenpunkt") as $items_child){
