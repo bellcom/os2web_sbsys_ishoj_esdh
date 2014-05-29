@@ -194,8 +194,13 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
         if (!$meeting_agendas){
           if (sizeof($agenda_instance->xpath("Dagsordenpunkt")))
             $meeting_agendas = $agenda_instance->xpath("Dagsordenpunkt");
-          else
+          else {
+            //importing open agenda
             $meeting_agendas = $agenda_instance->xpath("Gruppe[@navn='Åbne dagsordenspunkter']/Dagsordenpunkt");
+            //importing closed agenda
+            if (variable_get('os2web_meetings_import_closed_agenda', false))
+              $meeting_agendas = array_merge($meeting_agendas, $agenda_instance->xpath("Gruppe[@navn='Lukkede dagsordenspunkter']/Dagsordenpunkt"));
+          }
         }
         else {
           foreach($agenda_instance->xpath("Dagsordenpunkt") as $items_child){
@@ -272,7 +277,8 @@ function _os2web_sbsys_ishoj_esdh_mm_import_meeting_agenda(&$meeting, $agenda_xm
  *   The imported item.
  */
 function _os2web_sbsys_ishoj_esdh_mm_import_meeting_agenda_item($meeting, $xml) {
-  $xml_item['number'] = (string)$xml->attributes()->DagsordenpunktID;
+  $xml_item['id'] = (string)$xml->attributes()->DagsordenpunktID;
+  $xml_item['number'] = (string)$xml->attributes()->Nummer;
   //$xml_item['pdf'] = (string) $xml->PDFDocument;
   $xml_item_document = $xml->Bilagsliste;
   $xml_item_bullet = $xml->Indhold;
@@ -280,7 +286,8 @@ function _os2web_sbsys_ishoj_esdh_mm_import_meeting_agenda_item($meeting, $xml) 
   $xml_item['document_type'] = (string) $xml->attributes()->Åbent;
 
   $item = array(
-    'id' => $xml_item['number'],
+    'id' => $xml_item['id'],
+    'number' => $xml_item['number'],
     'sysid' => (string) $xml['ID'],
     'access' => $xml_item['document_type'],
     'bullets' => array(),
@@ -291,7 +298,9 @@ function _os2web_sbsys_ishoj_esdh_mm_import_meeting_agenda_item($meeting, $xml) 
   if (strcasecmp($item['access'], 'true') != 0) {
     //rewriting the access field to match esdh provider module
     $item['access'] = 'Lukket';
-  } else {
+  }
+  //importing open bullets only, or open and closed if it is permitted
+  if ($item['access'] !== 'Lukket' || variable_get('os2web_meetings_import_closed_agenda', false)){
     //// Process attachments.
     $xml_item_bullet = (array) $xml_item_bullet;
     foreach ($xml_item_bullet as $title => $body) {
@@ -309,6 +318,7 @@ function _os2web_sbsys_ishoj_esdh_mm_import_meeting_agenda_item($meeting, $xml) 
         'title' => (string) $enclosure->attributes()->Navn,
         'access' => strcmp((string)$enclosure->attributes()->MaaPubliceres,'true') ? TRUE : FALSE,
         'sysid' => (string) $enclosure->attributes()->BilagID,
+        'type' => 'Bilag',
       );
     }
   }
