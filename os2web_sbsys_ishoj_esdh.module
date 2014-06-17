@@ -54,6 +54,12 @@ function os2web_sbsys_ishoj_esdh_form_os2web_settings_settings_form_alter(&$form
     '#description' => 'Komma sepereret liste over ikke standard tegn der skal fjernes ved import.',
     '#default_value' => variable_get('os2web_sbsys_ishoj_esdh_banned_special_char', MM_DEFAULT_BANNED_CHAR),
   );
+  $form['meetings']['os2web_meetings_import_closed_agenda'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Import closed agenda'),
+    '#description'=>t('This decides if closed agenda is or is not to be imported'),
+    '#default_value' => variable_get('os2web_meetings_import_closed_agenda', false),
+  );
 }
 
 /**
