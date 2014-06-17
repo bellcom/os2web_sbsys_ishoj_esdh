@@ -114,6 +114,7 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
       $meeting_date_when_date = $manifest->xpath("Møde/@Mødedato");
       $meeting_date_when_time = $manifest->xpath("Møde/@Mødetid");
       $meeting_where = $manifest->xpath("Møde/@Mødested");
+      $additional_agenda = $manifest->xpath("@Tillægsdagsorden");
 
       $committee = (string) $committee[0]['UdvalgID'];
       //$committee_group_id = (string) $committee_group_id[0][ID];
@@ -122,6 +123,7 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
       $meeting_id = (string) $meeting_id[0]['MødeID'];
       $meeting_public = (string) $meeting_public[0];
       $meeting_type = (string) $meeting_type[0];
+      $additional_agenda = (string) $additional_agenda[0];
 
       $meeting_date_when = $meeting_date_when_date[0]['Mødedato'] . ' ' . $meeting_date_when_time[0]['Mødetid'];
       //$meeting_date_until = $meeting_data[0]->Until;
@@ -186,6 +188,7 @@ function os2web_sbsys_ishoj_esdh_mm_import_meeting($meeting) {
         'meeting_date_start' => $meeting_date_when,
         'full_doc' => $full_doc,
         'location' => $meeting_where,
+        'additional_agenda' => $additional_agenda,
       );
 
       /*stan@bellcom.dk 06.10 - importing multiple agendas*/
